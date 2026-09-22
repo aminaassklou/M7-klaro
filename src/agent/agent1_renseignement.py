@@ -24,22 +24,38 @@ Regles imperatives :
 """
 
 
+#def construire_agent(ctx: ContexteOutils):
+   # """A COMPLETER.
+
+    #Doit retourner un agent `create_agent` (import : `from langchain.agents
+    #import create_agent`) construit avec :
+    #- `model=construire_modele_llm()` (importee de `commun.py`, deja
+     # rate-limitee : ne construisez pas votre propre modele a la main) ;
+    #- `tools` : uniquement `chercher_faq` et `consulter_commande`, piochés
+     # dans `outils_langchain(ctx)` (qui retourne un dict, voir tools.py) ;
+    #- `system_prompt=PROMPT_SYSTEME`.
+
+    #C'est le choix des 2 outils, et l'absence de tout autre, qui garantit que
+    #cet agent ne peut structurellement pas déclencher ou promettre un
+    #remboursement, même si le prompt était mal rédigé ou contourné.
+    #"""
+    #raise NotImplementedError("A completer : construire_agent (agent 1)")
+
 def construire_agent(ctx: ContexteOutils):
-    """A COMPLETER.
+    from langchain.agents import create_agent
 
-    Doit retourner un agent `create_agent` (import : `from langchain.agents
-    import create_agent`) construit avec :
-    - `model=construire_modele_llm()` (importee de `commun.py`, deja
-      rate-limitee : ne construisez pas votre propre modele a la main) ;
-    - `tools` : uniquement `chercher_faq` et `consulter_commande`, piochés
-      dans `outils_langchain(ctx)` (qui retourne un dict, voir tools.py) ;
-    - `system_prompt=PROMPT_SYSTEME`.
+    outils = outils_langchain(ctx)
 
-    C'est le choix des 2 outils, et l'absence de tout autre, qui garantit que
-    cet agent ne peut structurellement pas déclencher ou promettre un
-    remboursement, même si le prompt était mal rédigé ou contourné.
-    """
-    raise NotImplementedError("A completer : construire_agent (agent 1)")
+    mes_outils = [
+        outils["chercher_faq"],
+        outils["consulter_commande"],
+    ]
+
+    return create_agent(
+        model=construire_modele_llm(),
+        tools=mes_outils,
+        system_prompt=PROMPT_SYSTEME,
+    )
 
 
 def repondre(ctx: ContexteOutils, question: str, tracer_trace: bool = True) -> dict:
