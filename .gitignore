@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+outputs/traces_agent/*
+outputs/*.csv
+.env
