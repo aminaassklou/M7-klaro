@@ -4,3 +4,5 @@ __pycache__/
 outputs/traces_agent/*
 outputs/*.csv
 .env
+.ipynb_checkpoints/
+*.Zone.Identifier
