@@ -27,22 +27,52 @@ from .. import config as C
 from .commun import construire_modele_llm, executer_avec_reprises
 
 
+#def classifier_message(texte: str) -> dict:
+    #"""A COMPLETER.
+
+    #Doit interroger `construire_modele_llm()` (importee de `commun.py`, deja
+    #rate-limitee : ne construisez pas votre propre modele a la main, et
+    #n'appelez cette fonction qu'une fois par appel, pas en boucle) pour
+    #classer `texte` parmi `C.TAXONOMIE`, et retourner un dict avec au moins
+    #"categorie", "confiance" (0-1) et "justification".
+
+    #Demandez au modele une reponse en JSON strict (par exemple :
+    #`{"categorie": "...", "confiance": 0.0, "justification": "..."}`), passez
+   # le texte brut de sa reponse (`modele.invoke(prompt).content`) a la
+    #fonction `_parser_reponse_json` fournie plus bas, qui gere le parsing et
+    #les cas de reponse mal formee.
+   # """
+    #raise NotImplementedError("A completer : classifier_message (agent 3)")
+
+
 def classifier_message(texte: str) -> dict:
-    """A COMPLETER.
+        modele = construire_modele_llm()
 
-    Doit interroger `construire_modele_llm()` (importee de `commun.py`, deja
-    rate-limitee : ne construisez pas votre propre modele a la main, et
-    n'appelez cette fonction qu'une fois par appel, pas en boucle) pour
-    classer `texte` parmi `C.TAXONOMIE`, et retourner un dict avec au moins
-    "categorie", "confiance" (0-1) et "justification".
+        prompt = f"""
+    Tu aides au pré-triage des messages clients Klaro.
 
-    Demandez au modele une reponse en JSON strict (par exemple :
-    `{"categorie": "...", "confiance": 0.0, "justification": "..."}`), passez
-    le texte brut de sa reponse (`modele.invoke(prompt).content`) a la
-    fonction `_parser_reponse_json` fournie plus bas, qui gere le parsing et
-    les cas de reponse mal formee.
+    Classe le message suivant dans une seule catégorie parmi :
+    {", ".join(C.TAXONOMIE)}
+
+    Réponds uniquement en JSON avec ce format :
+    {{
+    "categorie": "...",
+    "confiance": 0.0,
+    "justification": "..."
+    }}
+
+    Règles :
+    - "categorie" doit être une valeur de la taxonomie.
+    - "confiance" doit être entre 0 et 1.
+    - "justification" doit expliquer brièvement pourquoi cette catégorie a été choisie.
+    - N'invente pas d'information qui n'est pas dans le message.
+
+    Message client :
+    {texte}
     """
-    raise NotImplementedError("A completer : classifier_message (agent 3)")
+
+        reponse = modele.invoke(prompt).content
+        return _parser_reponse_json(reponse)
 
 
 def _parser_reponse_json(brut: str) -> dict:

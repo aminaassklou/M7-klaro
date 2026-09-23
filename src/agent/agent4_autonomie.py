@@ -64,7 +64,32 @@ def construire_agent(ctx: ContexteOutils):
     C'est cette fonction, et elle seule, qui rend le remboursement automatise
     impossible sans validation humaine explicite.
     """
-    raise NotImplementedError("A completer : construire_agent (agent 4)")
+    from langchain.agents import create_agent
+    from langchain.agents.middleware import HumanInTheLoopMiddleware
+    from langgraph.checkpoint.memory import InMemorySaver
+
+    outils = outils_langchain(ctx)
+
+    outils_agent4 = [
+        outils["verifier_eligibilite_remboursement"],
+        outils["initier_remboursement"],
+    ]
+
+    middleware_validation_humaine = HumanInTheLoopMiddleware(
+        interrupt_on={
+            "initier_remboursement": {
+                "allowed_decisions": ["approve", "reject"],
+            }
+        }
+    )
+
+    return create_agent(
+        model=construire_modele_llm(),
+        tools=outils_agent4,
+        system_prompt=PROMPT_SYSTEME,
+        middleware=[middleware_validation_humaine],
+        checkpointer=InMemorySaver(),
+    )
 
 
 def executer_agent4(ctx: ContexteOutils, commande_id: str, decision: dict,

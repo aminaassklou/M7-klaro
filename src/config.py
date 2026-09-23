@@ -61,7 +61,7 @@ TAXONOMIE = ["livraison", "retour_remboursement", "compte", "produit", "paiement
 # API. Mettez un petit nombre pendant le developpement (8 par exemple) pour
 # economiser des appels, puis repassez a None (tous les messages, 50) pour le
 # run final du livrable.
-LIMITE_MESSAGES_PRETRIAGE: int | None = 8
+LIMITE_MESSAGES_PRETRIAGE: int | None = 12
 
 # --------------------------------------------------------------------------
 # Agents
